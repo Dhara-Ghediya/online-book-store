@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	
+	<table class="tab brown hd">
+		<tr>
+			<td>ADMIN LOGIN</td>
+		</tr>
+	</table>
+
+	<table class="tab" border="0px" >
+		<tr>
+			<td>
+				<form action="" method="post">
+					{% csrf_token %}
+					Username: <input type="text" name="username"><br/><br/>
+					Password: <input type="password" name="password"><br/><br/>
+					<input type="submit" value=" LOGIN AS ADMIN " text-align="center">
+				</form>
+			</td>
+			
+		</tr>  
+	</table>
+	</div>
+
+{% endblock content %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	
+	<table class="tab hd brown">
+		<tr>
+			<td>Add Books</td>
+		</tr>
+	</table>
+
+	<table class="tab" border="0px" cellpadding="10" cellspacing="10" text-color="red">
+		<tr>
+			<td>
+				<form action="" method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					Book Code : <input type="text" name="barcode" required><br/><br/>
+					Book Name : <input type="text" name="name" required><br/><br/>
+					Book Type: <select name="type" id="type" required>
+							<option value="Finction">Finction</option>
+							<option value="Non-Finction">Non-Finction</option>
+							<option value="Historical-Finction">Historical-Finction</option>
+							<option value="Short-Story">Short-Story</option>
+							<option value="mystrery">mystrery</option>
+							<option value="Childrens-literature">Childrens-literature</option>
+							<option value="Graphic-Novel">Graphic-Novel</option>
+					</select><br><br>
+					Book Author: <input type="text" name="author" required><br/><br/>
+					Book Price: <input type="text" name="price" required><br/><br/>
+					Book Qnty : <input type="text" name="quantity" required><br/><br/>
+					Book's Image: <input type="file" id="img" name="img" accept="image/*" required><br/><br/>
+					<input type="submit" value=" Add These Books ">
+				</form>
+			</td>
+		</tr>  
+	</table>
+
+	<table class="tab">
+		<tr>
+			<td><a href="{% url 'home' %}">Back To Home Page</a></td>
+		</tr>
+	</table>
+	<table class="tab">
+		<tr>
+			<td><a href="{% url 'view_book_list' %}">Show Book List</a></td>
+		</tr>
+	</table>
+	</div>
+
+{% endblock content %}

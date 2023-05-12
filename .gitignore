@@ -1,0 +1,3 @@
+.env
+obsApp/__pycache__
+obsApp/migrations

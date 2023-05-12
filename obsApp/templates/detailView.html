@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+<table class="tab brown hd"  style="width: 600px;">
+    <tr>
+        <td>Details of {{bookdetail}}</td>
+    </tr>
+</table>
+
+<table class="tab" border="0px" style="width: 600px; height: 500px;">	
+    <tr>
+        <td>
+            <div style="display: flex;">
+                <div style="background-color: gray; padding-top: 25px;">
+                    <img src="{{bookdetail.book_img.url}}" alt="image" class="img-fluid" style="height: 300px; margin: 0px 30px; border-color: black;">
+                </div>
+                <div>
+                    Book Code: <span>{{bookdetail.book_code}}</span><br><br>
+                    Book Name: <span>{{bookdetail.book_name}}</span><br><br>
+                    Book Type: <span>{{bookdetail.book_type}}</span><br><br>
+                    Author Name: <span>{{bookdetail.author_name}}</span><br><br>
+                    Book Price: <span>{{bookdetail.price}}</span><br><br>
+                    Book Quantity: <span>{{bookdetail.quantity}}</span><br><br>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+<table class="tab">
+    <tr>
+        <td>
+            <div  style="width: 600px;">
+                <a href="{% url 'view_book_list' %}">Show Book List</a>
+            </div>
+        </td>
+    </tr>
+</table>
+
+{% endblock content %}
