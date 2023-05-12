@@ -1,3 +1,4 @@
 .env
 obsApp/__pycache__
 obsApp/migrations
+online-book-store/__pycache__
