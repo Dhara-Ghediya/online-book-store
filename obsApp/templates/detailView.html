@@ -25,7 +25,16 @@
                     Book Quantity: <span>{{bookdetail.quantity}}</span><br><br>
                 </div>
             </div>
+            <div class="product-event-items">
+                <a href="{% url 'add_to_cart' bookdetail.id %}" class="btn cart-btn">
+                    <span class="material-icons">shopping_cart_border</span>
+                </a>
+                <a href="#" class="btn wishlist-btn">
+                    <span class="material-icons">favorite_border</span>
+                </a>
+            </div>
         </td>
+        
     </tr>
 </table>
 <table class="tab">

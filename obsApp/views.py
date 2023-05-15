@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.core.files.storage import FileSystemStorage
 from django.contrib import messages
-from .models import UserModel, BookDetails
+from .models import UserModel, BookDetails, AddToCart
 from django.http import HttpResponse
 
 # Create your views here.
+############# Home Page ##############
 def home(request):
     return render(request, 'index.html')
 
+############# User Registration Page ##############
 def userRegistration(request):
     if request.method == 'POST':
         uname = request.POST.get('username')
@@ -25,19 +27,29 @@ def userRegistration(request):
         return redirect('home')
     return render(request, 'UserRegister.html')
 
+############# User Login Page ##############
 def userLogin(request):
     if request.method == 'POST':
         uname = request.POST.get('username')
+        request.session['userlogin'] = uname
         password = request.POST.get('password')
         login = UserModel.objects.filter(username=uname, password=password)
         if login:
             messages.success(request, "Login Successfully!")
             return redirect('view_book_list')
-    return render(request, 'UserLogin.html')
+        messages.info(request, "You are not registered user!")
+    if 'userlogin' not in request.session.keys():
+        # print(request.session['userlogin'])
+        # messages.warning(request, "First you have to logout your account!")
+        return render(request, 'UserLogin.html')
+    messages.warning(request, "First you have to logout!")
+    return redirect('home')
 
+############# Admin Login Page ##############
 def adminLogin(request):
     if request.method == 'POST':
         username = request.POST['username']
+        request.session['adminlogin'] = username
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None and user.is_superuser:
@@ -45,14 +57,20 @@ def adminLogin(request):
             return redirect('admin_menu')
     return render(request, 'AdminLogin.html')
 
+############# SHow All Books List Page ##############
 def viewBookList(request):
-    all_books = BookDetails.objects.all()
-    if request.method == 'POST':
-        pass
-    return render(request, 'ViewBooks.html', {"all_books":all_books})
+    if 'userlogin' in request.session.keys() or 'adminlogin' in request.session.keys():
+        all_books = BookDetails.objects.all()
+        return render(request, 'ViewBooks.html', {"all_books":all_books})
+    messages.info(request, "You can't see List of All Books without Login!")
+    return redirect('home')
 
+############# Menu for Admin ##############
 def adminMenu(request):
-    return render(request, 'adminMenu.html')
+    if 'adminlogin' in request.session.keys():
+        return render(request, 'adminMenu.html')
+    messages.warning(request, "You can't see this page coz You are not Admin!")
+    return redirect('home')
 
 def addBook(request):
     if request.method == 'POST':
@@ -86,8 +104,23 @@ def detailsView(request, id):
         print("6666")
         return redirect('view_book_list')
     
-def add_to_cart(request):
-    pass
+def add_to_cart(request, id):
+    user = request.session['userlogin']
+    book = BookDetails.objects.get(id=id)
+    obj = AddToCart(user = user, book=book)
+    obj.save()
+    messages.info(request, "your book added in Add to Cart Successfully! ")
+    return redirect('view_book_list')
+
+def viewCart(request):
+    user = request.session['userlogin']
+    cart_detail = AddToCart.objects.all()
+    count = 0
+    total_amount = 0
+    for item in cart_detail:
+        total_amount += item.book.price
+        count += 1
+    return render(request, 'viewCart.html', {"user": user, "cart_detail":cart_detail, "count": count, "total_amount": total_amount})
 
 def removeBook(request):
     if request.method == 'POST':
@@ -97,3 +130,16 @@ def removeBook(request):
         obj.delete()
         return redirect('admin_menu')
     return render(request, 'RemoveBooks.html')
+
+def removeBookFromCart(request):
+    if request.method == "POST":
+        code = request.POST.get('code')
+        
+        obj = AddToCart.objects.get(book__book_code = code)
+        obj.delete()
+        return redirect('view_cart')
+
+def logout(request):
+    request.session.flush()
+    request.session.clear_expired()
+    return redirect('home')

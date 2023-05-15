@@ -13,5 +13,10 @@ urlpatterns = [
     path('add-book', views.addBook, name='add_book'),
     path('detail-view/<id>', views.detailsView, name="details_view"),
     path('add-to-cart/<id>', views.add_to_cart, name="add_to_cart"),
-    path('remove-book', views.removeBook, name="remove-book")
+    path('remove-book', views.removeBook, name="remove-book"),
+    path('logout', views.logout, name="logout"), 
+    path('view-cart', views.viewCart, name="view_cart"), 
+    path('remove-book-from-cart', views.removeBookFromCart, name="remove_book_from_cart")
+    
+    
 ] +static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

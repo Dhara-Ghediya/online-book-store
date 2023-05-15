@@ -24,3 +24,7 @@ class BookDetails(models.Model):
     
     def __str__(self):
         return self.book_name
+    
+class AddToCart(models.Model):
+    user = models.CharField(max_length=100)
+    book = models.ForeignKey(BookDetails, on_delete=models.CASCADE)
