@@ -90,6 +90,19 @@
 		cursor: pointer;
 		width: 100%;
 	  }
+	  .button-clicked {
+		background-color: red; /* Change this to the desired color */
+	  }	
+	  /* Option 1: Apply class on click */
+#myButton.button-clicked {
+	background-color: red; /* Change this to the desired color */
+  }
+  
+  /* Option 2: Use :active pseudo-class */
+  /*#myButton:active {
+	background-color: red;
+  } */
+	
 	</style>
 </head>
 
@@ -116,7 +129,7 @@
 	</div>
 	
 	<div class="home">
-		<a href="viewbook">Books Available</a>
+		<a href="{% url 'available_books' %}">Books Available</a>
 	</div>
 
 	<div class="home">
@@ -128,4 +141,10 @@
     {% endblock content %}
 
 </body>
+<script>
+	const button = document.getElementById("myButton");
+	button.addEventListener("click", function() {
+	  button.classList.add("button-clicked");
+	});
+  </script>
 </html>

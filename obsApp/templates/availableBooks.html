@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<table class="tab brown hd">
+    <tr><br><br><br><br>
+        <td>List of All Available Books</td>
+    </tr>
+</table><br><br><br><br><br><br><br><br>
+<div style="display: flex; flex-wrap: wrap;">
+{% for book in books %}
+
+{% if book.quantity > 0 %}
+
+    <div>
+    <div style="height: 450px; width: 450px; margin-left: 30%;">
+        <img src="{{book.book_img.url}}" alt="image" class="img-fluid" style="height: 300px; width: 300px;"><br><br>
+        <h4>{{book.book_name}}</h4>
+    </div> 
+    </div>
+    {% endif %}
+{% endfor %}  
+ 
+
+{% endblock content %}

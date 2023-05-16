@@ -1,52 +1,38 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 
 <table class="tab brown hd">
     <tr><br><br><br><br>
-        <td>Hello {{user}}, Your Cart Details! </td>
+        <td>List of All Liked Books</td>
     </tr>
-</table><br><br><br><br><br><br>
+</table><br><br><br><br><br>
 
 <div style="display: flex; padding: 50px;">
     
     <div>
-        <h2>All Books:</h2>
-        {% for cart in cart_detail%}
+        <h2>All Liked Books:</h2>
+        {% for cart in liked_books%}
 
         <div style="display: flex; padding: 50px;">
             <div style="background-color: gray; padding-top: 25px;">
                 <img src="{{cart.book.book_img.url}}" alt="image" class="img-fluid" style="height: 300px; margin: 0px 30px; border-color: black;">
             </div>
-            <div style="padding: 0px 50px;">
+            <div style="padding: 50px;">
                 Book Code: <span>{{cart.book.book_code}}</span><br><br>
                 Book Name: <span>{{cart.book.book_name}}</span><br><br>
                 Book Type: <span>{{cart.book.book_type}}</span><br><br>
                 Author Name: <span>{{cart.book.author_name}}</span><br><br>
                 Book Price: <span>{{cart.book.price}}</span><br><br>
                 Book Quantity: <span>{{cart.book.quantity}}</span><br><br>
-                <form action="" method="POST">
+                <form action="{% url 'remove_from_like' %}" method="POST">
                     {% csrf_token %}
                     <input type="hidden" value="{{cart.book.book_code}}" name="code">
-                    <input type="number" name="number" min="0" max="{{cart.book.quantity}}" value="{{cart.same_book_count}}">
-                    <button type="submit">Add</button>
+                    <input type="submit" value="Remove Book from Like" >
                 </form>
-                <a href="{% url 'remove_book_from_cart' cart.book.book_code %}">
-                    <button> Remove Book from Cart </button></a>
             </div>
         </div>
         {% endfor %}
     </div>
-    <div style="padding: 0px 100px;">
-        <h2>Price Details:  </h2>
-        <div style="padding: 50px 0px;">
-            Total Items: {{count}}<br><br>
-            {% for item in cart_detail%}
-                Price of one peice of "{{item.book.book_name}}" (Total {{item.same_book_count}} Books): {{item.book.price}} <br><br>
-            {% endfor %}
-            <h5>Total Amount: {{total_amount}} </h5> <br><br>
-        </div>
-    </div>
-</div>
 
 {% endblock content %}

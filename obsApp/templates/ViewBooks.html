@@ -6,7 +6,6 @@
     <tr><br><br><br><br>
         <td>List of All Books</td>
     </tr>
-    
 </table>
 <table class="tab brown hd">
     <tr>
@@ -14,7 +13,7 @@
             <a href="{% url 'view_cart' %}" class="btn cart-btn">
                 <span class="material-icons">shopping_cart_border</span>
             </a>
-            <a href="#" class="btn wishlist-btn">
+            <a href="{% url 'view_liked_books' %}" class="btn wishlist-btn">
                 <span class="material-icons">favorite_border</span>
             </a>
         </div>
@@ -73,7 +72,7 @@
                                                     <a href="{% url 'add_to_cart' book.id %}" class="btn cart-btn">
                                                         <span class="material-icons">shopping_cart_border</span>
                                                     </a>
-                                                    <a href="#" class="btn wishlist-btn">
+                                                    <a href="{% url 'liked_books' book.id %}" class="btn wishlist-btn" >
                                                         <span class="material-icons">favorite_border</span>
                                                     </a>
                                                 </div>
@@ -95,3 +94,4 @@
 </div>
 
 {% endblock content %}
+

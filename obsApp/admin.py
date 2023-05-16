@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserModel, BookDetails, AddToCart
+from .models import UserModel, BookDetails, AddToCart, LikedBooks
 
 class UserModelAdmin(admin.ModelAdmin):
     list_display = ["username", "first_name", "last_name", "email_id", "phone_no"]
@@ -12,3 +12,7 @@ admin.site.register(BookDetails, BookDetailsAdmin)
 class AddToCartAdmin (admin.ModelAdmin):
     list_display = ["user"]
 admin.site.register(AddToCart, AddToCartAdmin)
+
+class LikedBooksAdmin (admin.ModelAdmin):
+    list_display = ["username"]
+admin.site.register(LikedBooks, LikedBooksAdmin)

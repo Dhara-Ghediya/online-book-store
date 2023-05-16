@@ -28,3 +28,8 @@ class BookDetails(models.Model):
 class AddToCart(models.Model):
     user = models.CharField(max_length=100)
     book = models.ForeignKey(BookDetails, on_delete=models.CASCADE)
+    same_book_count = models.IntegerField(default=0)
+    
+class LikedBooks(models.Model):
+    username = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    book = models.ForeignKey(BookDetails, on_delete=models.CASCADE)

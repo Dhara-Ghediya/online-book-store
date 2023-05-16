@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.core.files.storage import FileSystemStorage
 from django.contrib import messages
-from .models import UserModel, BookDetails, AddToCart
+from .models import UserModel, BookDetails, AddToCart, LikedBooks
 from django.http import HttpResponse
 
 # Create your views here.
@@ -107,37 +107,82 @@ def detailsView(request, id):
 def add_to_cart(request, id):
     user = request.session['userlogin']
     book = BookDetails.objects.get(id=id)
-    obj = AddToCart(user = user, book=book)
-    obj.save()
-    messages.info(request, "your book added in Add to Cart Successfully! ")
+    # obj = AddToCart(user = user, book=book)
+    obj = AddToCart.objects.get_or_create(user=user, book=book, same_book_count=1)
+    if obj:
+        # obj.save()
+        # messages.info(request, "your book added in Add to Cart Successfully! ")
+        return redirect('view_book_list')
+    messages.info(request, "Book is already added in Cart! ")
     return redirect('view_book_list')
 
 def viewCart(request):
     user = request.session['userlogin']
-    cart_detail = AddToCart.objects.all()
+    cart_detail = AddToCart.objects.filter(user = user)
+    print(cart_detail)
     count = 0
     total_amount = 0
+    if request.method == 'POST':
+        b_code = request.POST.get('code')
+        same_books = request.POST.get('number')
+        print("same", same_books)
+        # AddToCart.objects.filter(user = user, book__book_code = b_code).update(same_book_count=same_books)
+        obj = AddToCart.objects.filter(user = user, book__book_code = b_code)
+        print(obj)
+        if same_books == "0":
+            print("*963")
+            obj.delete() 
+            messages.success(request, "Item removed from cart.")
+        else:
+            AddToCart.objects.filter(user = user, book__book_code = b_code).update(same_book_count=same_books)
+            messages.success(request, "Cart updated successfully.")
     for item in cart_detail:
-        total_amount += item.book.price
-        count += 1
-    return render(request, 'viewCart.html', {"user": user, "cart_detail":cart_detail, "count": count, "total_amount": total_amount})
+        total_amount += item.book.price * item.same_book_count
+        count += item.same_book_count
+    return render(request, 'viewCart.html', {"user": user, "cart_detail": cart_detail, "count": count, "total_amount": total_amount})
 
 def removeBook(request):
     if request.method == 'POST':
         code = request.POST.get('barcode')
         obj = BookDetails.objects.get(book_code=code)
-        print("123",obj.book_code)
         obj.delete()
         return redirect('admin_menu')
     return render(request, 'RemoveBooks.html')
 
-def removeBookFromCart(request):
+def removeBookFromCart(request, code):
+    user = request.session['userlogin']
+    obj = AddToCart.objects.filter(user = user, book__book_code = code)
+    obj.delete()
+    return redirect('view_cart')
+
+def likedBook(request, id):
+    user = UserModel.objects.get(username = request.session['userlogin'])
+    book = BookDetails.objects.get(id=id)
+    
+    obj = AddToCart.objects.get_or_create(user=user, book=book)
+    if obj:
+    # obj = LikedBooks(username = user, book=book)
+    # obj.save()
+        return redirect('view_book_list')
+
+def viewLikedBooks(request):
+    user = UserModel.objects.get(username = request.session['userlogin'])
+    liked = LikedBooks.objects.filter(username=user)
+    return render(request, 'viewLikedBooksList.html', {'liked_books': liked })
+
+def removeFromLike(request):
     if request.method == "POST":
+        user = UserModel.objects.get(username = request.session['userlogin'])
         code = request.POST.get('code')
         
-        obj = AddToCart.objects.get(book__book_code = code)
+        obj = LikedBooks.objects.filter(username = user, book__book_code = code)
         obj.delete()
-        return redirect('view_cart')
+        return redirect('view_liked_books')
+
+def availableBooks(request):
+    books = BookDetails.objects.all()
+    print(books)
+    return render(request, 'availableBooks.html', {'books':books})
 
 def logout(request):
     request.session.flush()
