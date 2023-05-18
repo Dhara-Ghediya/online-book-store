@@ -1,14 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.core.files.storage import FileSystemStorage
 from django.contrib import messages
-from .models import UserModel, BookDetails, AddToCart, LikedBooks
-from django.http import HttpResponse
+from .models import UserModel, BookDetails, AddToCart, LikedBooks, Rating
+from django.http import HttpResponse,JsonResponse
 
 # Create your views here.
 ############# Home Page ##############
 def home(request):
-    return render(request, 'index.html')
+    user = request.session.get('userlogin', '') 
+    return render(request, 'index.html', {"user":user})
 
 ############# User Registration Page ##############
 def userRegistration(request):
@@ -21,20 +22,35 @@ def userRegistration(request):
         phone = request.POST.get('phone')
         email = request.POST.get('mailid')
         
-        register = UserModel(username=uname, password=password, first_name=fname, last_name=lname, address=address, phone_no=phone, email_id=email)
-        register.save()
-        messages.success(request, "Register Successfully! Now, You have to login...")
-        return redirect('home')
+        if len(phone) == 10:
+            # obj = UserModel.objects.filter(email_id=email)
+            # if obj:
+            #     messages.warning(request, "You are already registered! Please, Use different Username and Email Address!")
+            # else:
+            register = UserModel(username=uname, password=password, first_name=fname, last_name=lname, address=address, phone_no=phone, email_id=email)
+            try:
+                register.save()
+                messages.success(request, "Register Successfully! Now, You have to login...")
+                return redirect('home')
+            except Exception as e:
+                messages.warning(request, e)
+        else:
+            messages.warning(request, "Entered Mobile number not have 10 digits!")
+                
+        
     return render(request, 'UserRegister.html')
 
 ############# User Login Page ##############
 def userLogin(request):
     if request.method == 'POST':
         uname = request.POST.get('username')
-        request.session['userlogin'] = uname
+        
         password = request.POST.get('password')
-        login = UserModel.objects.filter(username=uname, password=password)
+        login = UserModel.objects.filter(username=uname, password =password)
+        print(login)
         if login:
+        # if login.password == password:
+            request.session['userlogin'] = uname
             messages.success(request, "Login Successfully!")
             return redirect('view_book_list')
         messages.info(request, "You are not registered user!")
@@ -61,9 +77,41 @@ def adminLogin(request):
 def viewBookList(request):
     if 'userlogin' in request.session.keys() or 'adminlogin' in request.session.keys():
         all_books = BookDetails.objects.all()
-        return render(request, 'ViewBooks.html', {"all_books":all_books})
+        all_rating = Rating.objects.all()
+        
+        for book in all_books:
+            total = 0
+            count = 0
+            for rate in all_rating:
+                if rate.book_id.book_name == book.book_name:
+                    total += rate.rating
+                    count += 1
+            if count != 0:
+                avg = total/count
+            else:
+                avg = 0
+            book.rating = avg
+            book.count = count
+        user = request.session.get('userlogin', '')
+        return render(request, 'ViewBooks.html', {"all_books":all_books, "user":user})
     messages.info(request, "You can't see List of All Books without Login!")
     return redirect('home')
+
+############# Rating of Books ##############
+def rating(request):
+    id = request.GET.get('id')
+    rating = request.GET.get('rating')
+    user = UserModel.objects.get(username = request.session.get('userlogin'))
+    book = BookDetails.objects.get(id=id)
+    check=Rating.objects.filter(user_id=user,book_id=book)
+    if len(check) == 0:
+        print("if")
+        obj = Rating(user_id=user, book_id=book, rating=rating)
+        obj.save()
+    else:
+        print("else")
+        check.update(rating=rating)
+    return JsonResponse({'status':True})
 
 ############# Menu for Admin ##############
 def adminMenu(request):
@@ -72,6 +120,7 @@ def adminMenu(request):
     messages.warning(request, "You can't see this page coz You are not Admin!")
     return redirect('home')
 
+############# Add New Book ##############
 def addBook(request):
     if request.method == 'POST':
         code = request.POST.get('barcode')
@@ -95,6 +144,7 @@ def addBook(request):
                 return redirect('add_book')
     return render(request, 'AddBook.html')
 
+############# Detail view for Perticular Book ##############
 def detailsView(request, id):
     print(id)
     obj = BookDetails.objects.get(id=id)
@@ -104,11 +154,12 @@ def detailsView(request, id):
         print("6666")
         return redirect('view_book_list')
     
+############# Add Book in to Cart ##############
 def add_to_cart(request, id):
     user = request.session['userlogin']
     book = BookDetails.objects.get(id=id)
     # obj = AddToCart(user = user, book=book)
-    obj = AddToCart.objects.get_or_create(user=user, book=book, same_book_count=1)
+    obj = AddToCart.objects.get_or_create(user=user, book=book)
     if obj:
         # obj.save()
         # messages.info(request, "your book added in Add to Cart Successfully! ")
@@ -116,6 +167,7 @@ def add_to_cart(request, id):
     messages.info(request, "Book is already added in Cart! ")
     return redirect('view_book_list')
 
+############# View Cart ##############
 def viewCart(request):
     user = request.session['userlogin']
     cart_detail = AddToCart.objects.filter(user = user)
@@ -141,6 +193,7 @@ def viewCart(request):
         count += item.same_book_count
     return render(request, 'viewCart.html', {"user": user, "cart_detail": cart_detail, "count": count, "total_amount": total_amount})
 
+############# Remove Book from Database ##############
 def removeBook(request):
     if request.method == 'POST':
         code = request.POST.get('barcode')
@@ -149,27 +202,35 @@ def removeBook(request):
         return redirect('admin_menu')
     return render(request, 'RemoveBooks.html')
 
+############# Remove Book from Cart ##############
 def removeBookFromCart(request, code):
     user = request.session['userlogin']
     obj = AddToCart.objects.filter(user = user, book__book_code = code)
     obj.delete()
     return redirect('view_cart')
 
+############# Add Book into like page ##############
 def likedBook(request, id):
     user = UserModel.objects.get(username = request.session['userlogin'])
     book = BookDetails.objects.get(id=id)
     
-    obj = AddToCart.objects.get_or_create(user=user, book=book)
+    obj = LikedBooks.objects.get_or_create(username=user, book=book)
     if obj:
+        # messages.warning(request, "book already liked!")
+        # return redirect('view_book_list')
     # obj = LikedBooks(username = user, book=book)
     # obj.save()
+    # else:
+        # like = LikedBooks()
         return redirect('view_book_list')
 
+############# View List of Books ##############
 def viewLikedBooks(request):
     user = UserModel.objects.get(username = request.session['userlogin'])
     liked = LikedBooks.objects.filter(username=user)
     return render(request, 'viewLikedBooksList.html', {'liked_books': liked })
 
+############# Remove Book from Like page ##############
 def removeFromLike(request):
     if request.method == "POST":
         user = UserModel.objects.get(username = request.session['userlogin'])
@@ -179,11 +240,13 @@ def removeFromLike(request):
         obj.delete()
         return redirect('view_liked_books')
 
+############# Available Books in store ##############
 def availableBooks(request):
     books = BookDetails.objects.all()
     print(books)
     return render(request, 'availableBooks.html', {'books':books})
 
+############# Logout User ##############
 def logout(request):
     request.session.flush()
     request.session.clear_expired()

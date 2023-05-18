@@ -14,7 +14,7 @@
 			<td>
 				<form action="" method="post">
 					{% csrf_token %}
-					Username : <input type="text" name="username" required><br/><br/>
+					Username : <input type="text" name="username" pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]$" required><br/><br/>
 					Password : <input type="password" name="password" required><br/><br/>
 					FirstName: <input type="text" name="firstname" required><br/><br/>
 					Last Name: <input type="text" name="lastname" required><br/><br/>

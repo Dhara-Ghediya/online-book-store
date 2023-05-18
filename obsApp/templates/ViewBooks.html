@@ -2,8 +2,16 @@
 {% load static %}
 {% block content %}
 
+{% if user %}
+<table class="tab brown hd" bgcolor="black">
+	<tr>
+		<td>Hello, {{user}}</td>
+	</tr>
+</table>
+{% endif %}
+
 <table class="tab brown hd">
-    <tr><br><br><br><br>
+    <tr><br><br>
         <td>List of All Books</td>
     </tr>
 </table>
@@ -35,7 +43,7 @@
 
                                         {% for book in all_books %}
                                         <div class="row">
-                                        <div style="height: 500px; width: 500px; margin-left: 15%;">
+                                        <div style="height: 550px; width: 500px; margin-left: 15%;">
                                         <a href="{% url 'details_view' book.id %}" class="image img-responsive"> 
                                             <img src="{{book.book_img.url}}" alt="image" class="img-fluid" style="height: 300px; width: 300px;">
 <!--                                            <ul class="tooltip-tag-items">
@@ -48,26 +56,29 @@
                                                 <h4 class="title">
                                                     <a href="{% url 'details_view' book.id %}">{{book.book_name}}</a>
                                                 </h4>
-                                                <span class="price">{{book.price}} Rs. </span>
+                                                <span class="price">{{book.price}} Rs.   |   Rated by {{book.count}} users.</span>
                                             </div>
-                                            <div class="bottom">
-<!--                                                <ul class="review-star">
-                                                    <li class="fill">
-                                                        <span class="material-icons">star</span>
-                                                    </li>
-                                                    <li class="fill">
-                                                        <span class="material-icons">star</span>
-                                                    </li>
-                                                    <li class="fill">
-                                                        <span class="material-icons">star</span>
-                                                    </li>
-                                                    <li class="fill">
-                                                        <span class="material-icons">star</span>
-                                                    </li>
-                                                    <li class="fill">
-                                                        <span class="material-icons">star_half</span>
-                                                    </li>
-                                                </ul>    -->
+                                            <div>
+                                                <h5>Average rating:
+                                                    {{book.rating}}
+                                                    <span class="fa fa-star {% if book.rating > 0 %} checked {% endif %}"></span>
+                                                    <span class="fa fa-star {% if book.rating > 1 %} checked {% endif %}"></span>
+                                                    <span class="fa fa-star {% if book.rating > 2 %} checked {% endif %}"></span>
+                                                    <span class="fa fa-star {% if book.rating > 3 %} checked {% endif %}" ></span>
+                                                    <span class="fa fa-star {% if book.rating > 4 %} checked {% endif %}"></span>
+                                                </h5>
+                                                <ul class="btn btn-light list-inline rating-list">
+                                                    <li onclick="rate(5, {{ book.id }})">
+                                                        <i class="fa fa-star {% if book.rating > 4 %} checked {% endif %}" title="Rate 5"></i></li>
+                                                    <li onclick="rate(4, {{ book.id }})">
+                                                        <i class="fa fa-star {% if book.rating > 3 %} checked {% endif %}" title="Rate 4"></i></li>
+                                                    <li onclick="rate(3, {{ book.id }})">
+                                                        <i class="fa fa-star {% if book.rating > 2 %} checked {% endif %}" title="Rate 3"></i></li>
+                                                    <li onclick="rate(2, {{ book.id }})">
+                                                        <i class="fa fa-star {% if book.rating > 1 %} checked {% endif %}" title="Rate 2"></i></li>
+                                                    <li onclick="rate(1, {{ book.id }})">
+                                                        <i class="fa fa-star {% if book.rating > 0 %} checked {% endif %}" title="Rate 1"></i></li>
+                                                  </ul>  
                                                 <div class="product-event-items">
                                                     <a href="{% url 'add_to_cart' book.id %}" class="btn cart-btn">
                                                         <span class="material-icons">shopping_cart_border</span>
@@ -92,6 +103,27 @@
         </div>
     </div>
 </div>
+
+<script>
+    function rate(rating, id) {
+        $.ajax({
+            url: "{% url 'rating' %}",
+            method: "GET",
+            data: { rating: rating, id: id },
+            success: function (data) {
+              if (data.status) {
+                console.log(data.status)
+                location.reload(); // Reload the page
+              }
+              else{
+                location.reload(); // Reload the page
+              }
+            }
+        });
+              
+    }
+</script>
+
 
 {% endblock content %}
 

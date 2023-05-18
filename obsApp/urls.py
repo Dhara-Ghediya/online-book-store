@@ -20,7 +20,10 @@ urlpatterns = [
     path('liked-books/<id>', views.likedBook, name="liked_books"), 
     path('view-liked-books', views.viewLikedBooks, name="view_liked_books"),
     path('remove-from-like', views.removeFromLike, name="remove_from_like"), 
-    path('available-books', views.availableBooks, name="available_books")
+    path('available-books', views.availableBooks, name="available_books"),
+    path('rating', views.rating, name="rating")
     
     
 ] +static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

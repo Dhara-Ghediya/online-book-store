@@ -1,7 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	
+
+{% if user %}
+<table class="tab brown hd" bgcolor="black">
+	<tr>
+		<td>Hello, {{user}}</td>
+	</tr>
+</table>
+{% else %}
+
 	<table class="tab brown hd" bgcolor="black">
 		<tr>
 			<td>Login or Signup Below</td>
@@ -25,10 +33,12 @@
 			<td><a href="{% url 'user_register' %}">New <big> User </big> ! Register Here</a></td>
 		</tr>
 	</table>
+	{% endif %}
+	{% if user %}
 	<table class="tab">
 		<tr>
 			<td><a href="{% url 'view_book_list' %}">Show Books List</a></td>
 		</tr>
 	</table>
-
+	{% endif %}
 {% endblock content %}

@@ -3,10 +3,15 @@
 {% block content %}
 
 <table class="tab brown hd">
-    <tr><br><br><br><br>
+    <tr><br><br><br>
         <td>List of All Liked Books</td>
     </tr>
-</table><br><br><br><br><br>
+</table>
+<table class="tab">
+    <tr>
+        <td><a href="{% url 'view_book_list' %}">Show Books List</a></td>
+    </tr>
+</table><br><br><br>
 
 <div style="display: flex; padding: 50px;">
     
@@ -25,11 +30,20 @@
                 Author Name: <span>{{cart.book.author_name}}</span><br><br>
                 Book Price: <span>{{cart.book.price}}</span><br><br>
                 Book Quantity: <span>{{cart.book.quantity}}</span><br><br>
+                <div class="product-event-items">
+                    <a href="{% url 'add_to_cart' cart.book.id %}" class="btn cart-btn">
+                        <span class="material-icons">shopping_cart_border</span>
+                    </a>
+                    <a href="{% url 'liked_books' cart.book.id %}" class="btn wishlist-btn" >
+                        <span class="material-icons">favorite_border</span>
+                    </a>
+                </div>
                 <form action="{% url 'remove_from_like' %}" method="POST">
                     {% csrf_token %}
                     <input type="hidden" value="{{cart.book.book_code}}" name="code">
                     <input type="submit" value="Remove Book from Like" >
                 </form>
+                
             </div>
         </div>
         {% endfor %}
