@@ -75,7 +75,7 @@ def adminLogin(request):
 
 ############# SHow All Books List Page ##############
 def viewBookList(request):
-    if 'userlogin' in request.session.keys() or 'adminlogin' in request.session.keys():
+    if 'userlogin' in request.session.keys():
         all_books = BookDetails.objects.all()
         all_rating = Rating.objects.all()
         
@@ -117,6 +117,14 @@ def rating(request):
 def adminMenu(request):
     if 'adminlogin' in request.session.keys():
         return render(request, 'adminMenu.html')
+    messages.warning(request, "You can't see this page coz You are not Admin!")
+    return redirect('home')
+
+def showBooksListForAdmin(request):
+    if 'adminlogin' in request.session.keys():
+        all_books = BookDetails.objects.all()
+        admin = request.session.get('adminlogin', '')
+        return render(request, 'adminShow.html', {"all_books":all_books, "admin":admin })
     messages.warning(request, "You can't see this page coz You are not Admin!")
     return redirect('home')
 
@@ -194,13 +202,10 @@ def viewCart(request):
     return render(request, 'viewCart.html', {"user": user, "cart_detail": cart_detail, "count": count, "total_amount": total_amount})
 
 ############# Remove Book from Database ##############
-def removeBook(request):
-    if request.method == 'POST':
-        code = request.POST.get('barcode')
-        obj = BookDetails.objects.get(book_code=code)
-        obj.delete()
-        return redirect('admin_menu')
-    return render(request, 'RemoveBooks.html')
+def removeBook(request, code):
+    obj = BookDetails.objects.get(book_code=code)
+    obj.delete()
+    return redirect('admin_show')
 
 ############# Remove Book from Cart ##############
 def removeBookFromCart(request, code):

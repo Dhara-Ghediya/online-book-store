@@ -85,6 +85,9 @@
 	.brown{
 		color:brown;
 	}
+	button{
+		background-color: gray;
+	}
 	input[type=submit] {
 		background-color: #04AA6D;
 		color: black;
@@ -131,13 +134,15 @@
 <body>
 
 	{% if messages %}
-	<ul class="messages">
+		<div class="messages">
 		{% for message in messages %}
-		<li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+			<div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>
+				{{ message }}
+			</div>
 		{% endfor %}
-	</ul>
+		</div>
 	{% endif %}
-
+	
 	<div id="topmid"><br>
 		<h1>Welcome to Online Book Store</h1>
 	</div><br><br>
