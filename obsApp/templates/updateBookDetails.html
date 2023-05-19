@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{% if admin %}
+<table class="tab brown hd" bgcolor="black">
+	<tr><br><br>
+		<td>Hello, {{admin}}</td>
+	</tr>
+</table>
+{% endif %}
+
+<table class="tab brown hd">
+    <tr><br>
+        <td>Update Details of <br> "{{book_details.book_name}}": </td>
+    </tr>
+</table><br>
+
+
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div style="display: flex; width: 1000px; padding: 30px; height: 600px;">
+                <div>
+                    <div style="background-color: gray; padding: 25px; height: 400px; width: 300px; margin-bottom: 30px;">
+                        <img src="{{book_details.book_img.url}}" alt="image" class="img-fluid" style="height: 300px; margin: 0px 30px; border-color: black;">
+                    </div>
+                    Update Book's Image: <input type="file" id="img" name="img" accept="image/*" value="{{book_details.book_img.url}}"><br/><br/>
+                </div>
+                <div style="padding: 10px;">
+                    <input type="hidden" name="barcode" value="{{book_details.book_code}}" required><br/><br/>
+                    Book Name : <input type="text" name="name" value="{{book_details.book_name}}" required><br/><br/>
+                    Book Type: <select name="type" id="type" required>
+                        
+                            <option value="Finction" {% if book_details.book_type == 'Finction' %} selected {% endif %}>Finction</option>
+                            <option value="Non-Finction" {% if book_details.book_type == 'Non-Finction' %} selected {% endif %}>Non-Finction</option>
+                            <option value="Historical-Finction" {% if book_details.book_type == 'Historical-Finction' %} selected {% endif %}>Historical-Finction</option>
+                            <option value="Short-Story" {% if book_details.book_type == 'Short-Story' %} selected {% endif %}>Short-Story</option>
+                            <option value="mystrery" {% if book_details.book_type == 'mystrery' %} selected {% endif %}>mystrery</option>
+                            <option value="Childrens-literature" {% if book_details.book_type == 'Childrens-literature' %} selected {% endif %}>Childrens-literature</option>
+                            <option value="Graphic-Novel" {% if book_details.book_type == 'Graphic-Novel' %} selected {% endif %}>Graphic-Novel</option>
+                        
+                    </select><br><br>
+                    Book Author: <input type="text" name="author" value="{{book_details.author_name}}" required><br/><br/>
+                    Book Price: <input type="text" name="price" value="{{book_details.price}}" required><br/><br/>
+                    Book Qnty : <input type="text" name="quantity" value="{{book_details.quantity}}" required><br/><br/>
+                    <input type="submit" value=" Update Details ">
+                </div>
+            </div>
+            </form>
+       
+
+{% endblock content %}

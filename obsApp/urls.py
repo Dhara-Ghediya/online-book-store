@@ -22,7 +22,8 @@ urlpatterns = [
     path('remove-from-like', views.removeFromLike, name="remove_from_like"), 
     path('available-books', views.availableBooks, name="available_books"),
     path('rating', views.rating, name="rating"), 
-    path('admin-show', views.showBooksListForAdmin, name="admin_show")
+    path('admin-show', views.showBooksListForAdmin, name="admin_show"), 
+    path('update-book-details/<code>', views.updateBookDetails, name="update_book_details")
     
     
 ] +static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

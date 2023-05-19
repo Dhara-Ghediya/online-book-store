@@ -31,19 +31,16 @@
                                         <div class="row">
                                         <div style="height: 450px; width: 500px; margin-left: 15%;">
                                             <img src="{{book.book_img.url}}" alt="image" class="img-fluid" style="height: 300px; width: 300px;">
-<!--                                            <ul class="tooltip-tag-items">
-                                                <li class="color-green">20%</li>
-                                            </ul>-->
                                         <div class="content">
                                             <div class="top">
                                                 <span class="category">{{book.book_type}}</span>
                                                 <h4 class="title">
                                                     {{book.book_name}}
                                                 </h4>
-                                                <span class="price">{{book.price}} Rs.   |   Rated by {{book.count}} users.</span>
+                                                <span class="price">{{book.price}} Rs.  </span>
                                             </div>
                                             <div>
-<!--                                                <a href=""><button>Update Book Details</button></a>    -->
+                                                <a href="{% url 'update_book_details' book.book_code %}"><button>Update Details</button></a> 
                                                 <a href="{% url 'remove_book' book.book_code %}"><button>Remove Book</button></a>
                                             </div>
                                         </div>

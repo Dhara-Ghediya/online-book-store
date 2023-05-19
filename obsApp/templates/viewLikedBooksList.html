@@ -3,7 +3,7 @@
 {% block content %}
 
 <table class="tab brown hd">
-    <tr><br><br><br>
+    <tr><br><br>
         <td>List of All Liked Books</td>
     </tr>
 </table>
@@ -11,7 +11,22 @@
     <tr>
         <td><a href="{% url 'view_book_list' %}">Show Books List</a></td>
     </tr>
-</table><br><br><br>
+</table>
+<table class="tab brown hd">
+    <tr>
+        <td><div class="product-event-items">
+            <a href="{% url 'view_cart' %}" class="btn cart-btn">
+                <span class="material-icons">shopping_cart_border</span>
+            </a>
+            <a href="{% url 'view_liked_books' %}" class="btn wishlist-btn">
+                <span class="material-icons">favorite_border</span>
+            </a>
+        </div>
+    </td>
+    </tr>
+    
+</table>
+<br><br>
 
 <div style="display: flex; padding: 50px;">
     

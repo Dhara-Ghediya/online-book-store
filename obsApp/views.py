@@ -78,7 +78,7 @@ def viewBookList(request):
     if 'userlogin' in request.session.keys():
         all_books = BookDetails.objects.all()
         all_rating = Rating.objects.all()
-        
+        print()
         for book in all_books:
             total = 0
             count = 0
@@ -86,11 +86,13 @@ def viewBookList(request):
                 if rate.book_id.book_name == book.book_name:
                     total += rate.rating
                     count += 1
+                if rate.user_id.username == request.session.get('userlogin') and rate.book_id.book_name == book.book_name:
+                    book.book_vise = rate.rating
             if count != 0:
                 avg = total/count
             else:
                 avg = 0
-            book.rating = avg
+            book.rating = int(avg)
             book.count = count
         user = request.session.get('userlogin', '')
         return render(request, 'ViewBooks.html', {"all_books":all_books, "user":user})
@@ -112,6 +114,45 @@ def rating(request):
         print("else")
         check.update(rating=rating)
     return JsonResponse({'status':True})
+
+def updateBookDetails(request, code):
+    if 'adminlogin' in request.session.keys():
+        if request.method == 'POST':
+            b_code = request.POST.get('barcode')
+            name = request.POST.get('name')
+            type = request.POST.get('type')
+            author = request.POST.get('author')
+            price = request.POST.get('price')
+            qnty = request.POST.get('quantity')
+            img = request.FILES.get('img')
+                           
+            book = BookDetails.objects.get(book_code=b_code)
+            if book:
+                book.book_name = name
+                book.book_type = type
+                book.author_name = author
+                book.price = price
+                book.quantity = qnty
+                if img is not None:
+                    fs = FileSystemStorage()
+                    filename = fs.save(img.name, img)
+                    uploaded_img_url = fs.url(filename)
+                    book.book_img = uploaded_img_url
+                # book.update(book_name=name, book_type=type, author_name=author, price=price, quantity=qnty, book_img=img)
+                book.save()
+                messages.success(request, "Book Updated Successfully!")
+                return redirect('admin_show')
+        try:
+            code = int(code)
+        except ValueError:
+            messages.warning(request, "Invalid book code!")
+            return redirect('home')
+        admin = request.session.get('adminlogin', '')
+        book_details = BookDetails.objects.get(book_code = code)
+        if book_details:
+            return render(request, 'updateBookDetails.html', {"book_details": book_details, "admin": admin})
+    messages.warning(request, "You can't see this page coz You are not Admin!")
+    return redirect('home')
 
 ############# Menu for Admin ##############
 def adminMenu(request):

@@ -69,15 +69,15 @@
                                                 </h5>
                                                 <ul class="btn btn-light list-inline rating-list">
                                                     <li onclick="rate(5, {{ book.id }})">
-                                                        <i class="fa fa-star {% if book.rating > 4 %} checked {% endif %}" title="Rate 5"></i></li>
+                                                        <i class="fa fa-star {% if book.book_vise > 4 %} checked {% endif %}" title="Rate 5"></i></li>
                                                     <li onclick="rate(4, {{ book.id }})">
-                                                        <i class="fa fa-star {% if book.rating > 3 %} checked {% endif %}" title="Rate 4"></i></li>
+                                                        <i class="fa fa-star {% if book.book_vise > 3 %} checked {% endif %}" title="Rate 4"></i></li>
                                                     <li onclick="rate(3, {{ book.id }})">
-                                                        <i class="fa fa-star {% if book.rating > 2 %} checked {% endif %}" title="Rate 3"></i></li>
+                                                        <i class="fa fa-star {% if book.book_vise > 2 %} checked {% endif %}" title="Rate 3"></i></li>
                                                     <li onclick="rate(2, {{ book.id }})">
-                                                        <i class="fa fa-star {% if book.rating > 1 %} checked {% endif %}" title="Rate 2"></i></li>
+                                                        <i class="fa fa-star {% if book.book_vise > 1 %} checked {% endif %}" title="Rate 2"></i></li>
                                                     <li onclick="rate(1, {{ book.id }})">
-                                                        <i class="fa fa-star {% if book.rating > 0 %} checked {% endif %}" title="Rate 1"></i></li>
+                                                        <i class="fa fa-star {% if book.book_vise > 0 %} checked {% endif %}" title="Rate 1"></i></li>
                                                   </ul>  
                                                 <div class="product-event-items">
                                                     <a href="{% url 'add_to_cart' book.id %}" class="btn cart-btn">
